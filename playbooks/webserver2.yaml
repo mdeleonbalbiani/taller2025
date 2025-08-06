@@ -1,18 +1,18 @@
 ---
 - name: Play para la instalacion y configuracion inicial de webserver
-  hosts: webserver
+  hosts: prueba
   become: yes
 
   tasks:
 
   - name: El paquete httpd tiene que estar instalado
     ansible.builtin.dnf: 
-      name: "{{ paquete }}"
+      name: httpd
       state: present
 
   - name: Iniciar el daemon y dejarlo en enable
     ansible.builtin.systemd_service:
-      name: "{{ servicio }}"
+      name: httpd
       enabled: true
       state: started
 
@@ -22,12 +22,14 @@
       state: enabled
       permanent: true
       immediate: true
-    loop: "{{ servicios_firewall }}"
+    loop: 
+      - http
+      - https    
 
   - name: Archivo indice customizado
     ansible.builtin.template:
-      src: ../templates/index.j2
-      dest: /var/www/html/index.html
+      src: ./templates/index.j2
+      dest: /var/www/index.html
       owner: apache
       group: apache
       mode: u=rw,g=r,o=r
